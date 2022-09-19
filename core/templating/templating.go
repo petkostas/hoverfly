@@ -22,6 +22,8 @@ type Request struct {
 	Path       []string
 	Scheme     string
 	Body       func(queryType, query string, options *raymond.Options) string
+	Form       func(query string, options *raymond.Options) string
+	form       map[string][]string
 	body       string
 	Method     string
 }
@@ -85,6 +87,8 @@ func NewTemplatingDataFromRequest(requestDetails *models.RequestDetails, state m
 			Header:     requestDetails.Headers,
 			Scheme:     requestDetails.Scheme,
 			Body:       templateHelpers{}.requestBody,
+			Form:       templateHelpers{}.requestFormData,
+			form:       requestDetails.Form,
 			body:       requestDetails.Body,
 			Method:     requestDetails.Method,
 		},

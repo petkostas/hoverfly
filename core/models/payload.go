@@ -12,7 +12,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/SpectoLabs/hoverfly/core/handlers/v2"
+	v2 "github.com/SpectoLabs/hoverfly/core/handlers/v2"
 	"github.com/SpectoLabs/hoverfly/core/interfaces"
 	"github.com/SpectoLabs/hoverfly/core/util"
 	log "github.com/sirupsen/logrus"
@@ -61,6 +61,7 @@ type RequestDetails struct {
 	Scheme      string
 	Query       map[string][]string
 	Body        string
+	Form        map[string][]string
 	Headers     map[string][]string
 	rawQuery    string
 }
@@ -71,6 +72,7 @@ func NewRequestDetailsFromHttpRequest(req *http.Request) (RequestDetails, error)
 	}
 
 	reqBody, err := util.GetRequestBody(req)
+	reqForm := util.GetRequestForm(req)
 
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -101,6 +103,7 @@ func NewRequestDetailsFromHttpRequest(req *http.Request) (RequestDetails, error)
 		Query:       req.URL.Query(),
 		Body:        reqBody,
 		Headers:     req.Header.Clone(),
+		Form:        reqForm,
 		rawQuery:    req.URL.RawQuery,
 	}
 
@@ -125,6 +128,7 @@ func (this *RequestDetails) ConvertToRequestDetailsView() v2.RequestDetailsView 
 		Query:       &queryString,
 		QueryMap:    this.Query,
 		Body:        &this.Body,
+		Form:        &this.Form,
 		Headers:     this.Headers,
 	}
 }
@@ -197,6 +201,7 @@ type ResponseDetails struct {
 	Status           int
 	Body             string
 	BodyFile         string
+	Form             string
 	Headers          map[string][]string
 	Templated        bool
 	TransitionsState map[string]string

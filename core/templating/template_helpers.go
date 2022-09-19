@@ -134,6 +134,11 @@ func (t templateHelpers) requestBody(queryType, query string, options *raymond.O
 	return ""
 }
 
+func (t templateHelpers) requestFormData(query string, options *raymond.Options) string {
+	toMatch := options.Value("request").(Request).form
+	return toMatch[query][0]
+}
+
 func (t templateHelpers) jsonPath(query, toMatch string) string {
 	query = prepareJsonPathQuery(query)
 

@@ -67,3 +67,4 @@ test.db
 config.yaml
 /testdata/large_file.json
 /.project
+.vscode

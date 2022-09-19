@@ -11,11 +11,12 @@ import (
 	"sort"
 	"strings"
 
+	"strconv"
+	"time"
+
 	"github.com/tdewolff/minify"
 	mjson "github.com/tdewolff/minify/json"
 	"github.com/tdewolff/minify/xml"
-	"strconv"
-	"time"
 )
 
 // GetRequestBody will read the http.Request body io.ReadCloser
@@ -39,6 +40,13 @@ func GetRequestBody(request *http.Request) (string, error) {
 	request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	return string(bodyBytes), nil
+}
+
+// GetRequestForm will parse the request and return the `r.Form`
+// in order to be able to manipulate it further in templates.
+func GetRequestForm(request *http.Request) url.Values {
+	request.ParseForm()
+	return request.Form
 }
 
 // GetResponseBody will read the http.Response body io.ReadCloser
@@ -199,6 +207,7 @@ func CopyMap(originalMap map[string]string) map[string]string {
 
 // URL is regexp to match http urls
 const urlPattern = `^((ftp|https?):\/\/)(\S+(:\S*)?@)?((([1-9]\d?|1\d\d|2[01]\d|22[0-3])(\.(1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.([0-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(([a-zA-Z0-9]+([-\.][a-zA-Z0-9]+)*)|((www\.)?))?(([a-z\x{00a1}-\x{ffff}0-9]+-?-?)*[a-z\x{00a1}-\x{ffff}0-9]+)(?:\.([a-z\x{00a1}-\x{ffff}]{2,}))?))(:(\d{1,5}))?((\/|\?|#)[^\s]*)?$`
+
 var rxURL = regexp.MustCompile(urlPattern)
 
 func IsURL(str string) bool {
